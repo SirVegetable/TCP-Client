@@ -4,6 +4,7 @@
 #include <string> 
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <type_traits>
 
 
 class TcpClient {
@@ -17,8 +18,8 @@ class TcpClient {
     public: 
 
         TcpClient(); 
-        ~TcpClient(); 
-        
+        ~TcpClient();
+        void* get_in_addr(struct  sockaddr*);
         bool connect(const std::string& host, const std::string& portNumber);
         void send(std::string& msg); 
         std::string recieve();
