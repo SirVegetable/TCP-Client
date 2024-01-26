@@ -14,7 +14,7 @@ class TcpClient {
 
         TcpClient(); 
         ~TcpClient(); 
-
+        void* get_in_addr(sockaddr_in& server_address);
         void connect(const std::string& host, int portnumber);
         void send(std::string& msg); 
         std::string recieve();
