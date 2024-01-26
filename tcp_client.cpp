@@ -5,36 +5,25 @@
 #include <netdb.h>
 
 
-TcpClient::TcpClient()
+TcpClient::TcpClient(const std::string& host, const std::string& portNumber)
 {
 
-    socket_handler = 0; 
+    socket_handler = 0;
+    std::memset(&hints,0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
 
+    int status = getaddrinfo(host.c_str(), portNumber.c_str(), &hints, &serverInfo);
 };
 
 TcpClient::~TcpClient()
 {
+    freeaddrinfo(serverInfo); 
     disconnect(); 
 };
-void* TcpClient::get_in_addr(struct sockaddr_in &server_address)
+
+void TcpClient::connect()
 {
-
-}
-
-void TcpClient::connect(const std::string& host, int portnumber)
-{
-    int getaddrinfo();
-    socket_handler = socket(AF_INET, SOCK_STREAM, 0);
-    int IP = inet_pton(AF_INET, host.c_str() , &server_address.sin_addr);
-    if(IP == -1)
-    {
-        
-    }
-    else
-    {
-
-    }
-
 
 
 }
