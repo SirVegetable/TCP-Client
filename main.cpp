@@ -5,17 +5,17 @@
 int main(int argc, char*argv[]){
     std::string portNumber = "12345"; 
     std::string host = "127.0.0.1";
-    TcpClient client(host,portNumber);
+    TcpClient* client =  new TcpClient();
     std::string message = "Pretty Boy Slim";
 
-    client.connect(); 
+    client->connect(host,portNumber); 
 
-    client.send(message);
-    std::cout << client.recieve() << std::endl; 
+    client->send(message);
+    std::cout << client->recieve() << std::endl; 
 
-    client.disconnect(); 
+    client->disconnect(); 
 
-
+    delete client; 
     return 0; 
 
 }

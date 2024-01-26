@@ -16,10 +16,10 @@ class TcpClient {
 
     public: 
 
-        TcpClient(const std::string& host, const std::string& portNumber); 
+        TcpClient(); 
         ~TcpClient(); 
         
-        bool connect();
+        bool connect(const std::string& host, const std::string& portNumber);
         void send(std::string& msg); 
         std::string recieve();
         void disconnect(); 
