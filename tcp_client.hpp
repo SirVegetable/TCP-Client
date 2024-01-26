@@ -19,7 +19,7 @@ class TcpClient {
         TcpClient(const std::string& host, const std::string& portNumber); 
         ~TcpClient(); 
         
-        void connect();
+        bool connect();
         void send(std::string& msg); 
         std::string recieve();
         void disconnect(); 
