@@ -3,6 +3,7 @@
 #include <string> 
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <unistd.h>
 
 
 TcpClient::TcpClient()
@@ -12,7 +13,8 @@ TcpClient::TcpClient()
     ptr = nullptr; 
     std::memset(&hints,0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_socktype = SOCK_DGRAM; 
+    serverInfo = nullptr; 
 };
 
 TcpClient::~TcpClient()
@@ -29,7 +31,7 @@ void* TcpClient::get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr); 
 }
 
-bool TcpClient::connect(const std::string& host, const std::string& portNumber)
+bool TcpClient::connectClient(const std::string& host, const std::string& portNumber)
 {
 
     int status = getaddrinfo(host.c_str(),portNumber.c_str(),&hints, &serverInfo);
@@ -53,10 +55,17 @@ bool TcpClient::connect(const std::string& host, const std::string& portNumber)
         return false; 
     }
     // need to translate the address of the server to binary
-    int IP = inet_pton(ptr->ai_family, host.c_str(),get_in_addr((struct sockaddr *)ptr->ai_addr));
-  
- 
-
+    int IP = inet_pton(ptr->ai_family,host.c_str(), get_in_addr((struct sockaddr *)ptr->ai_addr));
+    if(IP == -1)
+    {
+        return false; 
+    }
+    
+    if(connect(socket_handler,ptr->ai_addr,ptr->ai_addrlen) < 0)
+    {
+        return false; 
+    }
+    return true; 
 
 
 
@@ -72,7 +81,8 @@ std::string TcpClient::recieve()
 }
 void TcpClient::disconnect()
 {
-
+    close(socket_handler);
+    socket_handler = 0; 
 }
         
 

@@ -13,14 +13,15 @@ class TcpClient {
         struct addrinfo hints;
         struct addrinfo *serverInfo;
         struct addrinfo *ptr; 
-        int status; 
+        int status;
+        char s[INET6_ADDRSTRLEN]; 
 
     public: 
 
         TcpClient(); 
         ~TcpClient();
         void* get_in_addr(struct  sockaddr*);
-        bool connect(const std::string& host, const std::string& portNumber);
+        bool connectClient(const std::string& host, const std::string& portNumber);
         void send(std::string& msg); 
         std::string recieve();
         void disconnect(); 
