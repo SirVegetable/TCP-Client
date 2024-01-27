@@ -14,7 +14,6 @@ class TcpClient {
         struct addrinfo *serverInfo;
         struct addrinfo *ptr; 
         int status;
-        char s[INET6_ADDRSTRLEN]; 
 
     public: 
 
@@ -23,7 +22,7 @@ class TcpClient {
         void* get_in_addr(struct  sockaddr*);
         bool connectClient(const std::string& host, const std::string& portNumber);
         bool send(std::string& msg); 
-        std::string recieve();
+        std::string recieve(int max_size = 2048);
         void disconnect(); 
         
 

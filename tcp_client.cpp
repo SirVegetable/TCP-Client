@@ -79,10 +79,12 @@ bool TcpClient::send(std::string& msg)
     }
     return true; 
 }
-std::string TcpClient::recieve()
+std::string TcpClient::recieve(int max_size)
 {
-
-    return "";
+    std::string buffer(max_size + 1, '\0');
+    int n = read(socket_id, &buffer[0], max_size);
+    buffer[n] = '\0';
+    return buffer;
 }
 void TcpClient::disconnect()
 {

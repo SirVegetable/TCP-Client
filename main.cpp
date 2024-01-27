@@ -6,7 +6,7 @@ int main(int argc, char*argv[]){
     std::string portNumber = "12345"; 
     std::string host = "127.0.0.1";
     TcpClient* client =  new TcpClient();
-    std::string message = "Pretty Boy Slim";
+    std::string message = "Pretty Boy Slim\n";
 
     if(client->connectClient(host,portNumber))
     {
