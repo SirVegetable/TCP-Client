@@ -9,11 +9,11 @@
 TcpClient::TcpClient()
 {
 
-    socket_handler = 0;
+    socket_id = 0;
     ptr = nullptr; 
     std::memset(&hints,0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_DGRAM; 
+    hints.ai_socktype = SOCK_STREAM; 
     serverInfo = nullptr; 
 };
 
@@ -42,7 +42,7 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
     // Create the socket availible addresses
     for(ptr = serverInfo; ptr != nullptr; ptr = ptr->ai_next)
     {
-        if((socket_handler = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol))== -1)
+        if((socket_id = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol))== -1)
         {
             perror("client: socket");
             continue; 
@@ -61,7 +61,7 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
         return false; 
     }
     
-    if(connect(socket_handler,ptr->ai_addr,ptr->ai_addrlen) < 0)
+    if(connect(socket_id,ptr->ai_addr,ptr->ai_addrlen) < 0)
     {
         return false; 
     }
@@ -70,9 +70,14 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
 
 
 }
-void TcpClient::send(std::string& msg)
+bool TcpClient::send(std::string& msg)
 {
-
+    int n = write(socket_id, msg.c_str(), msg.size());
+    if(n < 0)
+    {
+        return false; 
+    }
+    return true; 
 }
 std::string TcpClient::recieve()
 {
@@ -81,8 +86,8 @@ std::string TcpClient::recieve()
 }
 void TcpClient::disconnect()
 {
-    close(socket_handler);
-    socket_handler = 0; 
+    close(socket_id);
+    socket_id = 0; 
 }
         
 

@@ -1,4 +1,4 @@
-#include <tcp_client.hpp>
+#include "tcp_client.hpp"
 #include <iostream>
 
 
@@ -8,12 +8,20 @@ int main(int argc, char*argv[]){
     TcpClient* client =  new TcpClient();
     std::string message = "Pretty Boy Slim";
 
-    client->connect(host,portNumber); 
+    if(client->connectClient(host,portNumber))
+    {
+        std::cout << "connected\n"; 
 
-    client->send(message);
-    std::cout << client->recieve() << std::endl; 
+        client->send(message);
+        std::cout << "message sent\n"; 
+        std::cout << client->recieve() << std::endl; 
 
-    client->disconnect(); 
+        client->disconnect(); 
+    } 
+    else
+    {
+        std::cout << "Connection failed\n"; 
+    }
 
     delete client; 
     return 0; 

@@ -9,7 +9,7 @@
 
 class TcpClient {
     protected: 
-        int socket_handler;
+        int socket_id;
         struct addrinfo hints;
         struct addrinfo *serverInfo;
         struct addrinfo *ptr; 
@@ -22,7 +22,7 @@ class TcpClient {
         ~TcpClient();
         void* get_in_addr(struct  sockaddr*);
         bool connectClient(const std::string& host, const std::string& portNumber);
-        void send(std::string& msg); 
+        bool send(std::string& msg); 
         std::string recieve();
         void disconnect(); 
         
