@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
 
 TcpClient::TcpClient()
@@ -54,19 +55,16 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
     {    
         return false; 
     }
-    // need to translate the address of the server to binary
-    int IP = inet_pton(ptr->ai_family,host.c_str(), get_in_addr((struct sockaddr *)ptr->ai_addr));
-    if(IP == -1)
-    {
-        return false; 
-    }
+    // print the name of the host we are connecting to
+    inet_ntop(ptr->ai_family, get_in_addr((struct sockaddr* )ptr->ai_addr), hostName, sizeof(hostName));
+    std::cout << "client connecting to: " << hostName << "\n"; 
     
     if(connect(socket_id,ptr->ai_addr,ptr->ai_addrlen) < 0)
     {
         return false; 
     }
-    return true; 
-
+    std::cout << "connected\n "; 
+    return true;
 
 
 }
@@ -85,6 +83,11 @@ std::string TcpClient::recieve(int max_size)
     int n = read(socket_id, &buffer[0], max_size);
     buffer[n] = '\0';
     return buffer;
+}
+void TcpClient::recieveLoop(int max_size)
+{
+    std::string buffer(max_size + 1, '\0');
+
 }
 void TcpClient::disconnect()
 {
