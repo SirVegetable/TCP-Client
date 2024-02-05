@@ -10,10 +10,8 @@ int main(int argc, char*argv[]){
 
     if(client->connectClient(host,portNumber))
     {
-        std::cout << "connected\n"; 
 
         client->send(message);
-        std::cout << "message sent\n"; 
         std::cout << client->recieve() << std::endl; 
 
         client->disconnect(); 

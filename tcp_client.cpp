@@ -32,8 +32,9 @@ void* TcpClient::get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr); 
 }
 
-bool TcpClient::connectClient(const std::string& host, const std::string& portNumber)
+bool TcpClient::connectClient(const std::string& host, const std::string& portNumber, std::function<void(const std::string&)> callBack)
 {
+    this->callBack = callBack; 
 
     int status = getaddrinfo(host.c_str(),portNumber.c_str(),&hints, &serverInfo);
     if(status != 0){
@@ -55,15 +56,15 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
     {    
         return false; 
     }
+    
     // print the name of the host we are connecting to
     inet_ntop(ptr->ai_family, get_in_addr((struct sockaddr* )ptr->ai_addr), hostName, sizeof(hostName));
     std::cout << "client connecting to: " << hostName << "\n"; 
-    
     if(connect(socket_id,ptr->ai_addr,ptr->ai_addrlen) < 0)
     {
         return false; 
     }
-    std::cout << "connected\n "; 
+    std::cout << "connected\n"; 
     return true;
 
 
@@ -75,6 +76,7 @@ bool TcpClient::send(std::string& msg)
     {
         return false; 
     }
+    std::cout << "message sent\n"; 
     return true; 
 }
 std::string TcpClient::recieve(int max_size)
@@ -87,6 +89,14 @@ std::string TcpClient::recieve(int max_size)
 void TcpClient::recieveLoop(int max_size)
 {
     std::string buffer(max_size + 1, '\0');
+    while(true){
+        int n = read(socket_id, &buffer[0], max_size);
+        if(n > 0){
+            break; 
+        }
+        buffer[n] = '\n';
+        callBack(buffer); 
+    }
 
 }
 void TcpClient::disconnect()

@@ -6,7 +6,7 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <thread>
-
+#include <functional> 
 
 class TcpClient {
     protected: 
@@ -16,7 +16,8 @@ class TcpClient {
         struct addrinfo *ptr; 
         int status;
         char hostName[INET6_ADDRSTRLEN];
-
+        std::thread recievedThread;
+        std::function<void(const std::string&)> callBack; 
     public: 
 
         TcpClient(); 
