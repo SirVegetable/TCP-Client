@@ -103,10 +103,14 @@ std::string TcpClient::recieve(int max_size)
 void TcpClient::recieveLoop(int max_size)
 {
     std::string buffer(max_size + 1, '\0');
-    int n;
-    while ((n = read(socket_id, &buffer[0], max_size)) > 0) {
-        buffer[n] = '\0';
-        callBack(buffer); 
+    char temp;
+    while (read(socket_id, &temp, 1) > 0) {
+        if (temp == '\n') {
+            callBack(buffer);
+            buffer.clear();
+        } else {
+            buffer += temp;
+        }
     }
 }
 

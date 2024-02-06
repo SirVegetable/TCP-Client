@@ -19,6 +19,7 @@ int main(){
             if(message == "QUIT"){
                 break; 
             }
+            message += "\n";
             client.send(message);
 
         }
