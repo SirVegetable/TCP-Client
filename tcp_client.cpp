@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 
 
+
 TcpClient::TcpClient()
 {
 
@@ -26,7 +27,7 @@ TcpClient::~TcpClient()
 
 void* startRecieveLoop(void* tcpInstance){
     TcpClient* client = static_cast<TcpClient*>(tcpInstance);
-    client->recieveLoop();
+    client->TcpClient::recieveLoop();
     return nullptr; 
 }
 void* TcpClient::get_in_addr(struct sockaddr *sa) 
@@ -98,19 +99,18 @@ std::string TcpClient::recieve(int max_size)
     buffer[n] = '\0';
     return buffer;
 }
+
 void TcpClient::recieveLoop(int max_size)
 {
     std::string buffer(max_size + 1, '\0');
-    while(true){
-        int n = read(socket_id, &buffer[0], max_size);
-        if(n > 0){
-            break; 
-        }
-        buffer[n] = '\n';
+    int n;
+    while ((n = read(socket_id, &buffer[0], max_size)) > 0) {
+        buffer[n] = '\0';
         callBack(buffer); 
     }
-
 }
+
+
 void TcpClient::disconnect()
 {
     close(socket_id);
