@@ -23,6 +23,12 @@ TcpClient::~TcpClient()
     freeaddrinfo(serverInfo); 
     disconnect(); 
 };
+
+void* startRecieveLoop(void* tcpInstance){
+    TcpClient* client = static_cast<TcpClient*>(tcpInstance);
+    client->recieveLoop();
+    return nullptr; 
+}
 void* TcpClient::get_in_addr(struct sockaddr *sa) 
 {
     if (sa->sa_family == AF_INET) 
@@ -59,7 +65,12 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
     
     // print the name of the host we are connecting to
     inet_ntop(ptr->ai_family, get_in_addr((struct sockaddr* )ptr->ai_addr), hostName, sizeof(hostName));
-    std::cout << "client connecting to: " << hostName << "\n"; 
+    std::cout << "client connecting to: " << hostName << "\n";
+
+    //create thread before connecting to the socket, check if it fails
+    if(pthread_create(&recievedThread, nullptr, startRecieveLoop, this)!= 0){
+        return false; 
+    }
     if(connect(socket_id,ptr->ai_addr,ptr->ai_addrlen) < 0)
     {
         return false; 
@@ -69,6 +80,7 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
 
 
 }
+
 bool TcpClient::send(std::string& msg)
 {
     int n = write(socket_id, msg.c_str(), msg.size());
@@ -102,6 +114,7 @@ void TcpClient::recieveLoop(int max_size)
 void TcpClient::disconnect()
 {
     close(socket_id);
+    pthread_join(recievedThread, nullptr); 
     socket_id = 0; 
 }
         

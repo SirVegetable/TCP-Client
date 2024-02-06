@@ -1,27 +1,34 @@
 #include "tcp_client.hpp"
 #include <iostream>
+#include <string>
 
 
-int main(int argc, char*argv[]){
+
+int main(){
     std::string portNumber = "12345"; 
     std::string host = "127.0.0.1";
-    TcpClient* client =  new TcpClient();
-    std::string message = "Pretty Boy Slim\n";
+    TcpClient client;
+    std::string message;
 
-    if(client->connectClient(host,portNumber))
+    if(client.connectClient(host,portNumber,[](const std::string& msg){
+        std::cout << msg << "\n";
+    }))
     {
+        while(true){
+            std::getline(std::cin,message);
+            if(message == "QUIT"){
+                break; 
+            }
+            client.send(message);
 
-        client->send(message);
-        std::cout << client->recieve() << std::endl; 
+        }
+        client.disconnect(); 
 
-        client->disconnect(); 
     } 
     else
     {
         std::cout << "Connection failed\n"; 
     }
-
-    delete client; 
     return 0; 
 
 }
