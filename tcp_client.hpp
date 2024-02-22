@@ -18,12 +18,13 @@ class TcpClient {
         int status;
         char hostName[INET6_ADDRSTRLEN];
         std::function<void(const std::string&)> callBack; 
+        std::function<void()> onDisconnect; 
     public: 
 
         TcpClient(); 
         ~TcpClient();
         void* get_in_addr(struct  sockaddr*);
-        bool connectClient(const std::string& host, const std::string& portNumber,std::function<void(const std::string&)> callBack);
+        bool connectClient(const std::string& host, const std::string& portNumber,std::function<void(const std::string&)> callBack,std::function<void()> onDisconnect);
         bool send(std::string& msg); 
         std::string recieve(int max_size = 2048);
         void recieveLoop(int max_size = 2048); 

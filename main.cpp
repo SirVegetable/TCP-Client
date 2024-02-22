@@ -12,7 +12,10 @@ int main(){
 
     if(client.connectClient(host,portNumber,[](const std::string& msg){
         std::cout << msg << "\n";
+    },[](){
+        std::cout << "Disconected\n";
     }))
+
     {
         while(true){
             std::getline(std::cin,message);
@@ -20,7 +23,9 @@ int main(){
                 break; 
             }
             message += "\n";
-            client.send(message);
+            if(!client.send(message)){
+                break; 
+            }
 
         }
         client.disconnect(); 

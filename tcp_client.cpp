@@ -20,7 +20,8 @@ TcpClient::TcpClient()
 };
 
 TcpClient::~TcpClient()
-{
+{   
+    socket_id = 0; 
     freeaddrinfo(serverInfo); 
     disconnect(); 
 };
@@ -39,9 +40,11 @@ void* TcpClient::get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr); 
 }
 
-bool TcpClient::connectClient(const std::string& host, const std::string& portNumber, std::function<void(const std::string&)> callBack)
+bool TcpClient::connectClient(const std::string& host, const std::string& portNumber, std::function<void(const std::string&)> callBack,std::function<void()> onDisconnect)
 {
-    this->callBack = callBack; 
+
+    this->callBack = callBack;
+    this->onDisconnect = onDisconnect;  
 
     int status = getaddrinfo(host.c_str(),portNumber.c_str(),&hints, &serverInfo);
     if(status != 0){
@@ -82,8 +85,8 @@ bool TcpClient::connectClient(const std::string& host, const std::string& portNu
 
 }
 
-bool TcpClient::send(std::string& msg)
-{
+bool TcpClient::send(std::string& msg){   
+    if (socket_id == 0) return false; 
     int n = write(socket_id, msg.c_str(), msg.size());
     if(n < 0)
     {
@@ -112,6 +115,8 @@ void TcpClient::recieveLoop(int max_size)
             buffer += temp;
         }
     }
+    socket_id = 0;
+    onDisconnect(); 
 }
 
 
